@@ -1,0 +1,44 @@
+---
+title: "NASA Space Apps Challenge"
+author: "Swetha Natarajan"
+date: '2022-10-01'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+```
+
+```{r}
+install.packages("data.table")
+library(data.table)
+
+## We don't really need this just keeping it on there 
+GaiaData1 <- fread("GaiaSource_000-000-000.csv.gz")
+View(GaiaData1)
+
+##Main model 
+GaiaUnivModel <- fread("GaiaUniverseModel_4999.csv.gz")
+View(GaiaUnivModel)
+
+#this has everything but: zero epoch, limb darkening coefficients
+GaiaUnivModel <- subset(GaiaUnivModel, select = c("radial_velocity","spectral_type", "logg", "age", "radius", "vsini", "population", "semimajor_axis", "eccentricity", "orbit_period", "variability_period", "periastron_argument", "inclination", "mass"))
+
+GaiaUnivModel$earth_radius <- GaiaUnivModel$radius * 109.122
+
+##There are so NA values in our data set, so we're going to remove them
+#dropping NA values
+testdataframe <- GaiaUnivModel %>% drop_na(earth_radius)
+range(testdataframe$earth_radius)
+#new range is : 5.978107e-01 4.370827e+04, also the same when tested in excel 
+View(GaiaUnivModel)
+#exporting this as a CSV file
+write.csv(GaiaUnivModel, "GaiaUnivModel1.csv", row.names = TRUE)
+# Planet-star radius ratio, zero epoch, orbital period, scaled semi-major axis, inclination, eccentricity, argument of periastron, limb darkening coefficients
+```
+
+
